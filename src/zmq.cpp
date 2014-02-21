@@ -78,6 +78,7 @@ struct iovec {
 #include "err.hpp"
 #include "msg.hpp"
 #include "fd.hpp"
+#include "otc_debug.hpp"
 
 #if !defined ZMQ_HAVE_WINDOWS
 #include <unistd.h>
