@@ -33,8 +33,9 @@
 #include "err.hpp"
 #include "wire.hpp"
 #include "stdint.hpp"
+#include "otc_debug.hpp"
 
-zmq::pgm_sender_t::pgm_sender_t (io_thread_t *parent_, 
+zmq::pgm_sender_t::pgm_sender_t (io_thread_t *parent_,
       const options_t &options_) :
     io_object_t (parent_),
     has_tx_timer (false),
@@ -81,7 +82,7 @@ void zmq::pgm_sender_t::plug (io_thread_t *io_thread_, session_base_t *session_)
 
     handle = add_fd (downlink_socket_fd);
     uplink_handle = add_fd (uplink_socket_fd);
-    rdata_notify_handle = add_fd (rdata_notify_fd);   
+    rdata_notify_handle = add_fd (rdata_notify_fd);
     pending_notify_handle = add_fd (pending_notify_fd);
 
     //  Set POLLIN. We wont never want to stop polling for uplink = we never
@@ -159,11 +160,11 @@ void zmq::pgm_sender_t::in_event ()
 
 void zmq::pgm_sender_t::out_event ()
 {
-    //  POLLOUT event from send socket. If write buffer is empty, 
+    //  POLLOUT event from send socket. If write buffer is empty,
     //  try to read new data from the encoder.
     if (write_size == 0) {
 
-        //  First two bytes (sizeof uint16_t) are used to store message 
+        //  First two bytes (sizeof uint16_t) are used to store message
         //  offset in following steps. Note that by passing our buffer to
         //  the get data function we prevent it from returning its own buffer.
         unsigned char *bf = out_buffer + sizeof (uint16_t);
@@ -204,9 +205,15 @@ void zmq::pgm_sender_t::out_event ()
     size_t nbytes = pgm_socket.send (out_buffer, write_size);
 
     //  We can write either all data or 0 which means rate limit reached.
-    if (nbytes == write_size)
+    if (nbytes == write_size) {
+        //otc::debug("nbytes == %d, write_size == %d\n", nbytes, write_size);
         write_size = 0;
+    }
     else {
+        otc::debug("Uh oh... nbytes == %d, write_size == %d\n", nbytes, write_size);
+        otc::debug("Printing out_buffer:\n");
+        otc::dump_buffer(out_buffer, write_size);
+
         zmq_assert (nbytes == 0);
 
         if (errno == ENOMEM) {
@@ -236,4 +243,3 @@ void zmq::pgm_sender_t::timer_event (int token)
 }
 
 #endif
-

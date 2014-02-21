@@ -165,7 +165,9 @@ libzmq_la_SOURCES = \
     raw_encoder.hpp \
     raw_encoder.cpp \
     ypipe_conflate.hpp \
-    dbuffer.hpp
+    dbuffer.hpp	\
+    otc_debug.hpp \
+    otc_debug.cpp
 
 if ON_MINGW
 libzmq_la_LDFLAGS = -no-undefined -avoid-version -version-info @LTVER@ @LIBZMQ_EXTRA_LDFLAGS@
