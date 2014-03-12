@@ -192,7 +192,7 @@ void zmq::pgm_sender_t::out_event ()
         }
 
         write_size = sizeof (uint16_t) + bytes;
-        otc::debug("write_size == %d after adding sizeof (uint16_t) == %d and bytes == %d\n", sizeof(uint16_t), bytes);
+        otc::debug("write_size == %d after adding sizeof (uint16_t) == %d and bytes == %d\n", write_size, sizeof(uint16_t), bytes);
 
         //  Put offset information in the buffer.
         put_uint16 (out_buffer, offset);
@@ -210,6 +210,7 @@ void zmq::pgm_sender_t::out_event ()
 
     //  We can write either all data or 0 which means rate limit reached.
     if (nbytes == write_size) {
+        otc::debug("setting write_size to zero!\n");
         //otc::debug("nbytes == %d, write_size == %d\n", nbytes, write_size);
         write_size = 0;
     }
