@@ -4,7 +4,6 @@
 #include <time.h>
 #include <string>
 
-#include <sys/types.h>
 #include <unistd.h>
 #include <pthread.h>
 
