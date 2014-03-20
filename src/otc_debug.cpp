@@ -4,6 +4,10 @@
 #include <time.h>
 #include <string>
 
+#include <sys/types.h>
+#include <unistd.h>
+#include <pthread.h>
+
 void otc::debug(const char* msg, ...) {
     #ifdef OTC_DEBUG_ON
     time_t rawtime;
@@ -12,7 +16,7 @@ void otc::debug(const char* msg, ...) {
 
     char timeStr[50];
     strftime(timeStr, 50, "%c", timeinfo);
-    fprintf(stderr, "otc_debug - %s: ", timeStr);
+    fprintf(stderr, "otc_debug - %s - %d: ", timeStr, (unsigned int)pthread_self());
 
     va_list args;
     va_start(args, msg);
