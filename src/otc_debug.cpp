@@ -15,7 +15,7 @@ void otc::debug(const char* msg, ...) {
 
     char timeStr[50];
     strftime(timeStr, 50, "%c", timeinfo);
-    fprintf(stderr, "otc_debug - %s - %d: ", timeStr, (unsigned int)pthread_self());
+    fprintf(stderr, "otc_debug - %s - %lu: ", timeStr, (size_t)pthread_self());
 
     va_list args;
     va_start(args, msg);

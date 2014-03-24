@@ -163,7 +163,6 @@ void zmq::pgm_sender_t::out_event ()
     //  POLLOUT event from send socket. If write buffer is empty,
     //  try to read new data from the encoder.
     if (write_size == 0) {
-        otc::debug("write_size is zero now!\n");
 
         //  First two bytes (sizeof uint16_t) are used to store message
         //  offset in following steps. Note that by passing our buffer to
@@ -192,7 +191,6 @@ void zmq::pgm_sender_t::out_event ()
         }
 
         write_size = sizeof (uint16_t) + bytes;
-        otc::debug("write_size == %d after adding sizeof (uint16_t) == %d and bytes == %d\n", write_size, sizeof(uint16_t), bytes);
 
         //  Put offset information in the buffer.
         put_uint16 (out_buffer, offset);
@@ -204,20 +202,18 @@ void zmq::pgm_sender_t::out_event ()
     }
 
     //  Send the data.
-    otc::debug("Sending bytes, write_size==%d\n", write_size);
     size_t nbytes = pgm_socket.send (out_buffer, write_size);
-    otc::debug("Write size after send == %d\n", write_size);
 
     //  We can write either all data or 0 which means rate limit reached.
     if (nbytes == write_size) {
-        otc::debug("setting write_size to zero!\n");
-        //otc::debug("nbytes == %d, write_size == %d\n", nbytes, write_size);
         write_size = 0;
     }
     else {
-        otc::debug("Uh oh... nbytes == %d, write_size == %d\n", nbytes, write_size);
-        otc::debug("Printing out_buffer:\n");
-        otc::dump_buffer(out_buffer, write_size);
+        if(unlikely(nbytes != 0)) {
+          otc::debug("Uh oh... nbytes == %d, write_size == %d\n", nbytes, write_size);
+          otc::debug("Printing out_buffer:\n");
+          otc::dump_buffer(out_buffer, write_size);
+        }
 
         zmq_assert (nbytes == 0);
 
