@@ -4,7 +4,6 @@
 #include <time.h>
 #include <string>
 
-#include <unistd.h>
 #include <pthread.h>
 
 void otc::debug(const char* msg, ...) {
